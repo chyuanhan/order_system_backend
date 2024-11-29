@@ -9,7 +9,7 @@ exports.register = async (req, res) => {
     // check if username already exists
     let admin = await Admin.findOne({ username });
     if (admin) {
-      return res.status(400).json({ message: '用户名已存在' });
+      return res.status(400).json({ message: 'USERNAME ALREADY EXISTS' });
     }
 
     // create new admin
@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
 
     res.status(201).json({ token, adminId: admin._id });
   } catch (error) {
-    res.status(500).json({ message: '注册失败', error: error.message });
+    res.status(500).json({ message: 'REGISTRATION FAILED', error: error.message });
   }
 };
 
@@ -37,13 +37,13 @@ exports.login = async (req, res) => {
     // find admin
     const admin = await Admin.findOne({ username });
     if (!admin) {
-      return res.status(401).json({ message: '用户名或密码错误' });
+      return res.status(401).json({ message: 'USERNAME OR PASSWORD ERROR' });
     }
 
     // validate password
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).json({ message: '用户名或密码错误' });
+      return res.status(401).json({ message: 'USERNAME OR PASSWORD ERROR' });
     }
 
     // generate token (7 days valid)
@@ -66,11 +66,11 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login failed:', error);
-    res.status(500).json({ message: 'Login failed', error: error.message });
+    res.status(500).json({ message: 'LOGIN FAILED', error: error.message });
   }
 };
 
-// 验证 token
+// verify token
 exports.verifyToken = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -79,17 +79,17 @@ exports.verifyToken = async (req, res) => {
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    // 验证 token
+    // verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 查找管理员
+    // find admin
     const admin = await Admin.findById(decoded.id).select('-password');
 
     if (!admin) {
       return res.status(401).json({ message: 'Admin not found' });
     }
 
-    // 返回管理员信息
+    // return admin information
     res.json({
       admin: {
         id: admin._id,
@@ -102,10 +102,10 @@ exports.verifyToken = async (req, res) => {
   }
 };
 
-// 登出
+// logout
 exports.logout = async (req, res) => {
   try {
-    // 由于使用的是JWT，后端实际上不需要做任何操作
+    // Since JWT is used, no action is needed on the backend
     // The frontend will clear the token in localStorage
     res.json({ message: 'Logout successful' });
   } catch (error) {

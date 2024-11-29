@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({ message: '未提供认证token' });
+      return res.status(401).json({ message: 'UNAUTHORIZED TOKEN' });
     }
 
     // 验证token
@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('认证失败:', error);
-    return res.status(401).json({ message: '认证失败' });
+    console.error('UNAUTHORIZED', error);
+    return res.status(401).json({ message: 'UNAUTHORIZED' });
   }
 };
